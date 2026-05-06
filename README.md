@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💳 Premium Payment Gateway UI
 
-## Getting Started
+A production-grade, secure, and highly interactive Payment Gateway UI built with **Next.js 14**, **TypeScript**, and **Zustand**. This project simulates a real-world payment workflow including smart card detection, life-cycle management, and idempotent retries—all without external payment SDKs.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 💎 Premium Experience
+- **Glassmorphic UI**: Modern, sleek design with atmospheric gradients and backdrop blurs.
+- **Interactive Card Preview**: Real-time synchronization with the form, featuring brand detection (Visa, Mastercard, Amex) and dynamic reflections.
+- **Cinematic Feedback**: Full-screen status overlays with smooth animations for Processing, Success, and Error states.
+
+### 🧠 Smart Logic
+- **Real-time Validation**: Luhn algorithm for card numbers, smart expiry formatting, and CVV length validation based on card type.
+- **Idempotency System**: Stable transaction IDs reused across retries to prevent duplicate processing.
+- **Retry Mechanism**: Intelligent retry system (max 3 attempts) with state persistence.
+
+### 🛡️ Robust Architecture
+- **Clean Architecture**: Modular folder structure (`/components`, `/store`, `/utils`, `/types`).
+- **State Management**: Centralized logic using Zustand with `localStorage` persistence.
+- **Network Resilience**: 6-second request timeouts using `AbortController`.
+- **Error Handling**: Mapping of technical errors to user-friendly, sanitized messages.
+
+## 🛠️ Tech Stack
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript (Strict Mode)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **State**: Zustand
+
+## 📁 Project Structure
+```text
+/app             # App Router pages & API routes
+/components      # Reusable UI & complex components
+/store           # Global state (Zustand)
+/utils           # Business logic (Validation, Card, Error)
+/types           # Shared TypeScript interfaces
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏗️ Phase-wise Execution
+1. **Setup**: Architecture & Design System
+2. **UI Layer**: Payment Form & Core Components
+3. **Logic**: Smart Card Formatting & Brand Detection
+4. **Preview**: High-fidelity Card Visualization
+5. **Lifecycle**: Payment State Transitions
+6. **Backend**: Mock API Integration
+7. **Resilience**: Timeout & Abort Handling
+8. **Reliability**: Retry System Implementation
+9. **Persistence**: Transaction History & Local Storage
+10. **Consistency**: Idempotency Logic
+11. **Safety**: Production-grade Error Handling
+12. **Inclusivity**: Responsiveness & A11y (ARIA)
+13. **UX Polish**: Micro-interactions & Animations
+14. **Final**: Documentation & Cleanup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚦 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Install dependencies
+npm install
 
-## Learn More
+# Run development server
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Developed with focus on Security, Scalability, and User Experience.*
