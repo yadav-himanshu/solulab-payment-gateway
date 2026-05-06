@@ -4,14 +4,27 @@ import React from 'react';
 import { CheckCircle2, XCircle, Clock, Loader2, RefreshCw } from 'lucide-react';
 import { usePaymentStore } from '@/store/usePaymentStore';
 import { Button } from './ui/Button';
+import { cn } from '@/utils/ui';
 
 export const StatusOverlay = () => {
   const { status, resetPayment, error, retryPayment, retryCount } = usePaymentStore();
   const headingRef = React.useRef<HTMLHeadingElement>(null);
+  const previousFocusRef = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
     if (status !== 'IDLE') {
+      // Only capture focus if we haven't already (prevents overwriting original trigger)
+      if (!previousFocusRef.current) {
+        previousFocusRef.current = document.activeElement as HTMLElement;
+      }
+      // Focus the heading for screen readers on every state change
       headingRef.current?.focus();
+    } else {
+      // Restore focus when returning to IDLE
+      if (previousFocusRef.current) {
+        previousFocusRef.current.focus();
+        previousFocusRef.current = null;
+      }
     }
   }, [status]);
 
@@ -65,13 +78,18 @@ export const StatusOverlay = () => {
             </div>
             <div>
               <h3 ref={headingRef} tabIndex={-1} className="text-2xl font-bold text-white outline-none">
-                {status === 'TIMEOUT' ? 'Payment Timed Out' : 'Payment Failed'}
+                {retryCount >= 3 ? 'Transaction Failed' : (status === 'TIMEOUT' ? 'Payment Timed Out' : 'Payment Failed')}
               </h3>
               <p className="text-gray-400 mt-2">
-                {error || 'Something went wrong while processing your payment.'}
+                {retryCount >= 3 
+                  ? 'Maximum retry attempts reached. Please check your card details or try a different payment method.' 
+                  : (error || 'Something went wrong while processing your payment.')}
               </p>
-              <p className="text-sm font-medium text-gray-500 mt-4 uppercase tracking-widest">
-                Attempt {retryCount} of 3
+              <p className={cn(
+                "text-sm font-medium mt-4 uppercase tracking-widest",
+                retryCount >= 3 ? "text-red-400" : "text-gray-500"
+              )}>
+                {retryCount >= 3 ? 'Max Retries Reached' : `Attempt ${retryCount} of 3`}
               </p>
             </div>
             <div className="flex gap-4">

@@ -92,7 +92,7 @@ export const usePaymentStore = create<PaymentState>()(
         const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         try {
-          const response = await fetch('/api/pay', {
+          const fetchPromise = fetch('/api/pay', {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
@@ -101,6 +101,10 @@ export const usePaymentStore = create<PaymentState>()(
             body: JSON.stringify({ ...payload, transactionId }),
             signal: controller.signal,
           });
+
+          const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
+
+          const [response] = await Promise.all([fetchPromise, delayPromise]);
 
           clearTimeout(timeoutId);
           const data = await response.json();
@@ -113,9 +117,11 @@ export const usePaymentStore = create<PaymentState>()(
             set({ status: 'FAILED', error: errorMsg });
             updateTransaction(transactionId, { status: 'FAILED', error: errorMsg });
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           clearTimeout(timeoutId);
-          if (err.name === 'AbortError') {
+          const isAbortError = err instanceof Error && err.name === 'AbortError';
+
+          if (isAbortError) {
             const errorMsg = getFriendlyErrorMessage(PaymentErrorType.TIMEOUT);
             set({ status: 'TIMEOUT', error: errorMsg });
             updateTransaction(transactionId, { status: 'TIMEOUT', error: errorMsg });

@@ -12,11 +12,12 @@ import {
   ChevronDown, 
   Calendar, 
   Hash, 
-  Trash2 
+  Trash2,
+  LucideIcon
 } from 'lucide-react';
 
 const StatusBadge = ({ status }: { status: PaymentStatus }) => {
-  const configs: Record<PaymentStatus, { icon: any; color: string; bg: string }> = {
+  const configs: Record<PaymentStatus, { icon: LucideIcon; color: string; bg: string }> = {
     SUCCESS: { icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-500/10' },
     FAILED: { icon: XCircle, color: 'text-red-500', bg: 'bg-red-500/10' },
     TIMEOUT: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
@@ -92,9 +93,15 @@ export const TransactionHistory = () => {
                   </p>
                   <StatusBadge status={tx.status} />
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Calendar className="w-3 h-3" />
-                  {new Date(tx.timestamp).toLocaleString()}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px]">
+                  <div className="flex items-center gap-1.5 text-blue-400 font-mono">
+                    <Hash className="w-3 h-3" />
+                    {tx.id.slice(0, 8)}...
+                  </div>
+                  <div className="flex items-center gap-1.5 text-gray-500">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(tx.timestamp).toLocaleString()}
+                  </div>
                 </div>
               </div>
 

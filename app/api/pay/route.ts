@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 
+interface PaymentApiResponse {
+  success: boolean;
+  message?: string;
+  transactionId?: string;
+  error?: string;
+}
+
 // Simulation of a database for idempotency
-const processedTransactions = new Map<string, any>();
+const processedTransactions = new Map<string, PaymentApiResponse>();
 
 export async function POST(req: Request) {
   try {

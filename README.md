@@ -64,3 +64,16 @@ npm run dev
 
 ---
 *Developed with focus on Security, Scalability, and User Experience.*
+
+## 📝 Assumptions
+- **Mock API Latency**: The simulated backend includes random delays (up to 8s) to test timeout handling and loading states.
+- **Card Storage**: In a production environment, card details would never be stored in local storage. Here, only transaction history (masking card numbers) is persisted for demonstration.
+- **Idempotency**: The `transactionId` is assumed to be the source of truth for idempotency on the server side.
+- **Currency**: Currently limited to INR and USD for demonstration purposes.
+
+## 🔮 Future Improvements
+- **Security**: Integration with PCI-compliant tokenization services (e.g., Stripe, Braintree) to avoid handling raw card data.
+- **Localization**: Full i18n support for multi-language and regional currency formatting.
+- **Testing**: Implementation of Cypress/Playwright for end-to-end testing and Jest for unit testing business logic.
+- **Form Persistence**: Saving draft payment info (excluding CVV) to session storage to prevent data loss on accidental refresh.
+- **Advanced 3DS Simulation**: Adding a mock challenge-response step for 3D Secure verification.

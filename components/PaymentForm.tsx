@@ -1,102 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { cn } from '@/utils/ui';
 import { CreditCard, User, Calendar, Lock, IndianRupee, DollarSign } from 'lucide-react';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
 import { Button } from './ui/Button';
-import { usePaymentStore } from '@/store/usePaymentStore';
-import { PaymentPayload, Currency } from '@/types';
-import { 
-  validateCardNumber, 
-  validateExpiry, 
-  validateCVV, 
-  validateCardholderName 
-} from '@/utils/validation';
-import { formatCardNumber, formatExpiry, detectCardType } from '@/utils/card';
-import { CardType } from '@/types';
+import { usePaymentForm } from '@/hooks/usePaymentForm';
 
 export const PaymentForm = () => {
-  const { setStatus, status, draftPayment, setDraftPayment, cardType, setCardType } = usePaymentStore();
-  
-  const [errors, setErrors] = useState<Partial<Record<keyof PaymentPayload, string>>>({});
-  const [touched, setTouched] = useState<Partial<Record<keyof PaymentPayload, boolean>>>({});
-  const [isShaking, setIsShaking] = useState(false);
-
-  const validateField = (name: keyof PaymentPayload, value: any) => {
-    let error = '';
-    switch (name) {
-      case 'cardholderName':
-        if (!validateCardholderName(value)) error = 'Invalid name (min 3 characters)';
-        break;
-      case 'cardNumber':
-        if (!validateCardNumber(value)) error = 'Invalid card number';
-        break;
-      case 'expiry':
-        if (!validateExpiry(value)) error = 'Invalid expiry (MM/YY)';
-        break;
-      case 'cvv':
-        if (!validateCVV(value, cardType)) error = `Invalid CVV (${cardType === 'amex' ? 4 : 3} digits)`;
-        break;
-      case 'amount':
-        if (Number(value) <= 0) error = 'Amount must be greater than 0';
-        break;
-    }
-    return error;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    let formattedValue = value;
-
-    if (name === 'cardNumber') {
-      formattedValue = formatCardNumber(value);
-      setCardType(detectCardType(formattedValue));
-    } else if (name === 'expiry') {
-      formattedValue = formatExpiry(value);
-    } else if (name === 'cardholderName') {
-      formattedValue = value.toUpperCase();
-    }
-
-    setDraftPayment({ [name]: formattedValue });
-
-    if (touched[name as keyof PaymentPayload] || name === 'cardNumber' || name === 'expiry') {
-      const error = validateField(name as keyof PaymentPayload, formattedValue);
-      setErrors((prev) => ({ ...prev, [name]: error }));
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setTouched((prev) => ({ ...prev, [name]: true }));
-    const error = validateField(name as keyof PaymentPayload, value);
-    setErrors((prev) => ({ ...prev, [name]: error }));
-  };
-
-  const isFormValid = () => {
-    const fieldErrors = Object.keys(draftPayment).map((key) => 
-      validateField(key as keyof PaymentPayload, draftPayment[key as keyof PaymentPayload])
-    );
-    return fieldErrors.every((err) => !err) && 
-           Object.values(draftPayment).every((val) => val !== '');
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Prevent double submission if already processing
-    if (status === 'PROCESSING') return;
-
-    if (!isFormValid()) {
-      setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 400);
-      return;
-    }
-
-    const { processPayment } = usePaymentStore.getState();
-    await processPayment(draftPayment);
-  };
+  const {
+    draftPayment,
+    cardType,
+    status,
+    errors,
+    touched,
+    isShaking,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    isFormValid,
+  } = usePaymentForm();
 
   return (
     <form 
